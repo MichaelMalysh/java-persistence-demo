@@ -1,7 +1,6 @@
 package com.epam.java.persistance.demo.repository;
 
 import com.epam.java.persistance.demo.entity.Group;
-import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -14,21 +13,10 @@ import java.util.Optional;
 @Repository
 public interface GroupRepository extends JpaRepository<Group, Long> {
 
-//    @Query("SELECT DISTINCT g FROM Group g LEFT JOIN FETCH g.students")
-//    List<Group> findAll();
-//
-//    @Query("SELECT g FROM Group g LEFT JOIN FETCH g.students WHERE g.id = :id")
-//    Optional<Group> findById(@Param("id") Long id);
-
-//    @EntityGraph(attributePaths = {"students"})
-//    List<Group> findAll();
-//
-//    @EntityGraph(attributePaths = {"students"})
-//    Optional<Group> findById(Long id);
-
     @Query("SELECT g FROM Group g LEFT JOIN FETCH g.students WHERE g.code = :code")
     Optional<Group> findByCode(@Param("code") String code);
 
+    @Query(value = "SELECT CASE WHEN COUNT(g) > 0 THEN true ELSE false END FROM Group g WHERE g.code = :code")
     boolean existsByCode(String code);
 
     @Query("SELECT DISTINCT g FROM Group g LEFT JOIN FETCH g.students WHERE :currentDate BETWEEN g.startDate AND g.endDate")

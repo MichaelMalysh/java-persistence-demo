@@ -15,4 +15,8 @@ public interface StudentService {
     StudentDto updateStudent(Long id, StudentDto studentDto);
 
     void deleteStudent(Long id);
+
+    List<StudentDto> findStudentsOlderThan(int age);
+
+    List<StudentDto> findStudentsByName(String name);
 }

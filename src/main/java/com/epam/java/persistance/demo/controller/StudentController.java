@@ -40,4 +40,14 @@ public class StudentController {
     public void deleteStudent(@PathVariable Long id) {
         service.deleteStudent(id);
     }
+
+    @GetMapping("/search/{age}")
+    public List<StudentDto> findOldestStudent(@PathVariable int age) {
+        return service.findStudentsOlderThan(age);
+    }
+
+    @GetMapping("/search/{name}")
+    public List<StudentDto> findStudentsByName(@PathVariable String name) {
+        return service.findStudentsByName(name);
+        }
 }
