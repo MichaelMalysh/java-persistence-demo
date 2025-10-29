@@ -21,9 +21,34 @@ public class GroupController {
         return ResponseEntity.ok(groupService.getAllGroups());
     }
 
+    @GetMapping("/active")
+    public ResponseEntity<List<GroupDto>> getActiveGroups() {
+        return ResponseEntity.ok(groupService.getActiveGroups());
+    }
+
+    @GetMapping("/available")
+    public ResponseEntity<List<GroupDto>> getGroupsWithAvailableSpots() {
+        return ResponseEntity.ok(groupService.getGroupsWithAvailableSpots());
+    }
+
+    @GetMapping("/student/{email}")
+    public ResponseEntity<List<GroupDto>> getGroupsByStudentEmail(@PathVariable String email) {
+        return ResponseEntity.ok(groupService.getGroupsByStudentEmail(email));
+    }
+
+    @GetMapping("/ordered-by-count")
+    public ResponseEntity<List<GroupDto>> getGroupsOrderedByStudentCount() {
+        return ResponseEntity.ok(groupService.getGroupsOrderedByStudentCount());
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<GroupDto> getGroupById(@PathVariable Long id) {
         return ResponseEntity.ok(groupService.getGroupById(id));
+    }
+
+    @GetMapping("/by-code/{code}")
+    public ResponseEntity<GroupDto> getGroupByCode(@PathVariable String code) {
+        return ResponseEntity.ok(groupService.getGroupByCode(code));
     }
 
     @PostMapping
@@ -58,33 +83,6 @@ public class GroupController {
             @PathVariable Long studentId) {
         return ResponseEntity.ok(groupService.removeStudentFromGroup(groupId, studentId));
     }
-
-    //Starting from this endpoint
-    @GetMapping("/code/{code}")
-    public ResponseEntity<GroupDto> getGroupByCode(@PathVariable String code) {
-        return ResponseEntity.ok(groupService.getGroupByCode(code));
-    }
-
-    @GetMapping("/active")
-    public ResponseEntity<List<GroupDto>> getActiveGroups() {
-        return ResponseEntity.ok(groupService.getActiveGroups());
-    }
-
-    @GetMapping("/available")
-    public ResponseEntity<List<GroupDto>> getGroupsWithAvailableSpots() {
-        return ResponseEntity.ok(groupService.getGroupsWithAvailableSpots());
-    }
-
-    @GetMapping("/student/{email}")
-    public ResponseEntity<List<GroupDto>> getGroupsByStudentEmail(@PathVariable String email) {
-        return ResponseEntity.ok(groupService.getGroupsByStudentEmail(email));
-    }
-
-    @GetMapping("/ordered-by-count")
-    public ResponseEntity<List<GroupDto>> getGroupsOrderedByStudentCount() {
-        return ResponseEntity.ok(groupService.getGroupsOrderedByStudentCount());
-    }
-    //And ending with this endpoint
 
     @GetMapping("/search")
     public ResponseEntity<List<GroupDto>> searchGroups(@RequestParam String keyword) {
