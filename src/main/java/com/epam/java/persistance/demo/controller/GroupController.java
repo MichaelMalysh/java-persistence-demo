@@ -26,11 +26,6 @@ public class GroupController {
         return ResponseEntity.ok(groupService.getGroupById(id));
     }
 
-    @GetMapping("/code/{code}")
-    public ResponseEntity<GroupDto> getGroupByCode(@PathVariable String code) {
-        return ResponseEntity.ok(groupService.getGroupByCode(code));
-    }
-
     @PostMapping
     public ResponseEntity<GroupDto> createGroup(@RequestBody GroupDto groupDto) {
         return ResponseEntity.status(HttpStatus.CREATED)
@@ -64,6 +59,12 @@ public class GroupController {
         return ResponseEntity.ok(groupService.removeStudentFromGroup(groupId, studentId));
     }
 
+    //Starting from this endpoint
+    @GetMapping("/code/{code}")
+    public ResponseEntity<GroupDto> getGroupByCode(@PathVariable String code) {
+        return ResponseEntity.ok(groupService.getGroupByCode(code));
+    }
+
     @GetMapping("/active")
     public ResponseEntity<List<GroupDto>> getActiveGroups() {
         return ResponseEntity.ok(groupService.getActiveGroups());
@@ -74,11 +75,6 @@ public class GroupController {
         return ResponseEntity.ok(groupService.getGroupsWithAvailableSpots());
     }
 
-    @GetMapping("/search")
-    public ResponseEntity<List<GroupDto>> searchGroups(@RequestParam String keyword) {
-        return ResponseEntity.ok(groupService.searchGroups(keyword));
-    }
-
     @GetMapping("/student/{email}")
     public ResponseEntity<List<GroupDto>> getGroupsByStudentEmail(@PathVariable String email) {
         return ResponseEntity.ok(groupService.getGroupsByStudentEmail(email));
@@ -87,5 +83,11 @@ public class GroupController {
     @GetMapping("/ordered-by-count")
     public ResponseEntity<List<GroupDto>> getGroupsOrderedByStudentCount() {
         return ResponseEntity.ok(groupService.getGroupsOrderedByStudentCount());
+    }
+    //And ending with this endpoint
+
+    @GetMapping("/search")
+    public ResponseEntity<List<GroupDto>> searchGroups(@RequestParam String keyword) {
+        return ResponseEntity.ok(groupService.searchGroups(keyword));
     }
 }
