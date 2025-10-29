@@ -1,6 +1,7 @@
 package com.epam.java.persistance.demo.service;
 
 import com.epam.java.persistance.demo.domain.GroupDto;
+import com.epam.java.persistance.demo.domain.GroupFilterDto;
 import com.epam.java.persistance.demo.entity.Group;
 import com.epam.java.persistance.demo.entity.Student;
 import com.epam.java.persistance.demo.mapper.GroupMapper;
@@ -26,12 +27,12 @@ public class GroupServiceImpl implements GroupService {
     private final GroupMapper groupMapper;
 
 
-    public List<GroupDto> getGroupsFiltered(Boolean active, Boolean available, String studentEmail, Boolean orderedByCount) {
+    public List<GroupDto> getGroupsFiltered(GroupFilterDto filter) {
         List<Group> groups = groupRepository.findAll();
 
-        groups = filter(active, available, studentEmail, groups);
+        groups = filter(filter, groups);
 
-        List<GroupDto> orderedIds = applyOrdering(orderedByCount, groups);
+        List<GroupDto> orderedIds = applyOrdering(filter.orderedByCount(), groups);
         if (orderedIds != null) return orderedIds;
 
         return groups.stream()
@@ -39,12 +40,12 @@ public class GroupServiceImpl implements GroupService {
                 .collect(Collectors.toList());
     }
 
-    private List<Group> filter(Boolean active, Boolean available, String studentEmail, List<Group> groups) {
-        groups = applyStudentEmailFilter(studentEmail, groups);
+    private List<Group> filter(GroupFilterDto filter, List<Group> groups) {
+        groups = applyStudentEmailFilter(filter.studentEmail(), groups);
 
-        groups = applyAvailableFilter(available, groups);
+        groups = applyAvailableFilter(filter.available(), groups);
 
-        groups = applyActiveFilter(active, groups);
+        groups = applyActiveFilter(filter.active(), groups);
         return groups;
     }
 

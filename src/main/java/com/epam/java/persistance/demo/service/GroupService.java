@@ -1,12 +1,13 @@
 package com.epam.java.persistance.demo.service;
 
 import com.epam.java.persistance.demo.domain.GroupDto;
+import com.epam.java.persistance.demo.domain.GroupFilterDto;
 
 import java.util.List;
 
 public interface GroupService {
 
-    List<GroupDto> getGroupsFiltered(Boolean active, Boolean available, String studentEmail, Boolean orderedByCount);
+    List<GroupDto> getGroupsFiltered(GroupFilterDto filter);
     GroupDto getGroupById(Long id);
     GroupDto getGroupByCode(String code);
     GroupDto createGroup(GroupDto groupDto);

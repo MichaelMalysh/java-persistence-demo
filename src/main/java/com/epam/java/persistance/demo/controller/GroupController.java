@@ -1,6 +1,7 @@
 package com.epam.java.persistance.demo.controller;
 
 import com.epam.java.persistance.demo.domain.GroupDto;
+import com.epam.java.persistance.demo.domain.GroupFilterDto;
 import com.epam.java.persistance.demo.service.GroupService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -22,7 +23,8 @@ public class GroupController {
             @RequestParam(required = false) Boolean available,
             @RequestParam(required = false) String studentEmail,
             @RequestParam(required = false) Boolean orderedByCount) {
-        return ResponseEntity.ok(groupService.getGroupsFiltered(active, available, studentEmail, orderedByCount));
+        GroupFilterDto filter = new GroupFilterDto(active, available, studentEmail, orderedByCount);
+        return ResponseEntity.ok(groupService.getGroupsFiltered(filter));
     }
 
     @GetMapping("/{id}")
