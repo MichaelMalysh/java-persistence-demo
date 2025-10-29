@@ -25,10 +25,74 @@ public class GroupServiceImpl implements GroupService {
     private final StudentRepository studentRepository;
     private final GroupMapper groupMapper;
 
-    public List<GroupDto> getAllGroups() {
-        return groupRepository.findAll().stream()
+
+    public List<GroupDto> getGroupsFiltered(Boolean active, Boolean available, String studentEmail, Boolean orderedByCount) {
+        List<Group> groups = groupRepository.findAll();
+
+        groups = filter(active, available, studentEmail, groups);
+
+        List<GroupDto> orderedIds = applyOrdering(orderedByCount, groups);
+        if (orderedIds != null) return orderedIds;
+
+        return groups.stream()
                 .map(groupMapper::toGroupDto)
                 .collect(Collectors.toList());
+    }
+
+    private List<Group> filter(Boolean active, Boolean available, String studentEmail, List<Group> groups) {
+        groups = applyStudentEmailFilter(studentEmail, groups);
+
+        groups = applyAvailableFilter(available, groups);
+
+        groups = applyActiveFilter(active, groups);
+        return groups;
+    }
+
+    private List<GroupDto> applyOrdering(Boolean orderedByCount, List<Group> groups) {
+        if (Boolean.TRUE.equals(orderedByCount)) {
+            List<Long> orderedIds = groupRepository.findGroupIdsOrderedByStudentCount();
+            Map<Long, Group> groupMap = groups.stream()
+                    .collect(Collectors.toMap(Group::getId, g -> g));
+
+            return orderedIds.stream()
+                    .map(groupMap::get)
+                    .filter(Objects::nonNull)
+                    .map(groupMapper::toGroupDto)
+                    .collect(Collectors.toList());
+        }
+        return null;
+    }
+
+    private static List<Group> applyActiveFilter(Boolean active, List<Group> groups) {
+        if (Boolean.TRUE.equals(active)) {
+            LocalDate now = LocalDate.now();
+            groups = groups.stream()
+                    .filter(g -> !g.getStartDate().isAfter(now) && !g.getEndDate().isBefore(now))
+                    .collect(Collectors.toList());
+        }
+        return groups;
+    }
+
+    private static List<Group> applyAvailableFilter(Boolean available, List<Group> groups) {
+        if (Boolean.TRUE.equals(available)) {
+            groups = groups.stream()
+                    .filter(g -> g.getStudents().size() < g.getMaxCapacity())
+                    .collect(Collectors.toList());
+        }
+        return groups;
+    }
+
+    private List<Group> applyStudentEmailFilter(String studentEmail, List<Group> groups) {
+        if (studentEmail != null && !studentEmail.isEmpty()) {
+            List<Long> studentGroupIds = groupRepository.findGroupsByStudentEmail(studentEmail)
+                    .stream()
+                    .map(Group::getId)
+                    .toList();
+            groups = groups.stream()
+                    .filter(g -> studentGroupIds.contains(g.getId()))
+                    .collect(Collectors.toList());
+        }
+        return groups;
     }
 
     public GroupDto getGroupById(Long id) {
@@ -125,42 +189,10 @@ public class GroupServiceImpl implements GroupService {
         return groupMapper.toGroupDto(updatedGroup);
     }
 
-    public List<GroupDto> getActiveGroups() {
-        return groupRepository.findActiveGroups(LocalDate.now()).stream()
-                .map(groupMapper::toGroupDto)
-                .collect(Collectors.toList());
-    }
-
-    public List<GroupDto> getGroupsWithAvailableSpots() {
-        return groupRepository.findGroupsWithAvailableSpots().stream()
-                .map(groupMapper::toGroupDto)
-                .collect(Collectors.toList());
-    }
-
+    @Transactional
     public List<GroupDto> searchGroups(String keyword) {
         return groupRepository.searchByNameOrCode(keyword).stream()
                 .map(groupMapper::toGroupDto)
                 .collect(Collectors.toList());
     }
-
-    public List<GroupDto> getGroupsByStudentEmail(String email) {
-        return groupRepository.findGroupsByStudentEmail(email).stream()
-                .map(groupMapper::toGroupDto)
-                .collect(Collectors.toList());
-    }
-
-    public List<GroupDto> getGroupsOrderedByStudentCount() {
-        List<Long> orderedIds = groupRepository.findGroupIdsOrderedByStudentCount();
-        List<Group> groups = groupRepository.findByIdWithStudents(orderedIds);
-
-        Map<Long, Group> groupMap = groups.stream()
-                .collect(Collectors.toMap(Group::getId, g -> g));
-
-        return orderedIds.stream()
-                .map(groupMap::get)
-                .map(groupMapper::toGroupDto)
-                .filter(Objects::nonNull)
-                .collect(Collectors.toList());
-    }
-
 }

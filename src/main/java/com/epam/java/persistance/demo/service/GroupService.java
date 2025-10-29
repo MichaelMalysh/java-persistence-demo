@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface GroupService {
 
-    List<GroupDto> getAllGroups();
+    List<GroupDto> getGroupsFiltered(Boolean active, Boolean available, String studentEmail, Boolean orderedByCount);
     GroupDto getGroupById(Long id);
     GroupDto getGroupByCode(String code);
     GroupDto createGroup(GroupDto groupDto);
@@ -14,9 +14,5 @@ public interface GroupService {
     void deleteGroup(Long id);
     GroupDto addStudentToGroup(Long groupId, Long studentId);
     GroupDto removeStudentFromGroup(Long groupId, Long studentId);
-    List<GroupDto> getActiveGroups();
-    List<GroupDto> getGroupsWithAvailableSpots();
     List<GroupDto> searchGroups(String keyword);
-    List<GroupDto> getGroupsByStudentEmail(String email);
-    List<GroupDto> getGroupsOrderedByStudentCount();
 }

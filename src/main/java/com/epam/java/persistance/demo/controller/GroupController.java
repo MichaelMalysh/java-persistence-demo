@@ -17,28 +17,12 @@ public class GroupController {
     private final GroupService groupService;
 
     @GetMapping
-    public ResponseEntity<List<GroupDto>> getAllGroups() {
-        return ResponseEntity.ok(groupService.getAllGroups());
-    }
-
-    @GetMapping("/active")
-    public ResponseEntity<List<GroupDto>> getActiveGroups() {
-        return ResponseEntity.ok(groupService.getActiveGroups());
-    }
-
-    @GetMapping("/available")
-    public ResponseEntity<List<GroupDto>> getGroupsWithAvailableSpots() {
-        return ResponseEntity.ok(groupService.getGroupsWithAvailableSpots());
-    }
-
-    @GetMapping("/student/{email}")
-    public ResponseEntity<List<GroupDto>> getGroupsByStudentEmail(@PathVariable String email) {
-        return ResponseEntity.ok(groupService.getGroupsByStudentEmail(email));
-    }
-
-    @GetMapping("/ordered-by-count")
-    public ResponseEntity<List<GroupDto>> getGroupsOrderedByStudentCount() {
-        return ResponseEntity.ok(groupService.getGroupsOrderedByStudentCount());
+    public ResponseEntity<List<GroupDto>> getGroups(
+            @RequestParam(required = false) Boolean active,
+            @RequestParam(required = false) Boolean available,
+            @RequestParam(required = false) String studentEmail,
+            @RequestParam(required = false) Boolean orderedByCount) {
+        return ResponseEntity.ok(groupService.getGroupsFiltered(active, available, studentEmail, orderedByCount));
     }
 
     @GetMapping("/{id}")
